@@ -1,0 +1,50 @@
+{% extends "pharmacy/base.html" %}
+{% block title %}Оформление заказа — Здрав.Ру{% endblock %}
+{% block content %}
+<div class="breadcrumb"><a href="{% url 'home' %}">Главная</a>　/　<a href="{% url 'cart' %}">Корзина</a>　/　Оформление</div>
+<h1 class="page-title">Оформление заказа</h1>
+<div class="checkout-layout">
+    <form method="post" class="simple-card" enctype="multipart/form-data">
+        {% csrf_token %}
+        {% if form.non_field_errors %}
+            <div class="form-errors">{{ form.non_field_errors }}</div>
+        {% endif %}
+
+        {% for field in form %}
+            <div class="field">
+                <label for="{{ field.id_for_label }}">{{ field.label }}</label>
+                {{ field }}
+                {{ field.errors }}
+            </div>
+        {% endfor %}
+
+        {% if requires_prescription %}
+            <div class="prescription-upload">
+                <h2>Необходим рецепт</h2>
+                <p>В корзине есть рецептурные препараты. Прикрепите файл рецепта — фармацевт проверит его после оформления заказа.</p>
+                <ul>
+                    {% for medicine in prescription_medicines %}
+                        <li>{{ medicine.name }} — {{ medicine.dosage }}</li>
+                    {% endfor %}
+                </ul>
+                <label for="recipe_files">Файл(ы) рецепта</label>
+                <input type="file" id="recipe_files" name="recipe_files" accept=".jpg,.jpeg,.png,.pdf" multiple required>
+                <p class="muted">Форматы JPG, PNG и PDF. Максимальный размер каждого файла — 10 МБ.</p>
+            </div>
+        {% endif %}
+
+        <button class="btn" type="submit">Подтвердить заказ</button>
+    </form>
+
+    <aside class="simple-card">
+        <h2>Ваш заказ</h2>
+        {% for row in rows %}
+            <div class="summary-row">
+                <span>{{ row.medicine.name }} × {{ row.quantity }}</span>
+                <strong>{{ row.line_total }} ₽</strong>
+            </div>
+        {% endfor %}
+        <div class="cart-total">Итого: {{ total }} ₽</div>
+    </aside>
+</div>
+{% endblock %}

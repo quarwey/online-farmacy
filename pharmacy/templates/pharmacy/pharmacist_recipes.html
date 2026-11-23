@@ -1,0 +1,37 @@
+{% extends "pharmacy/base.html" %}
+{% block title %}Проверка рецептов — Здрав.Ру{% endblock %}
+{% block content %}
+<div class="breadcrumb"><a href="{% url 'home' %}">Главная</a> / Проверка рецептов</div>
+<h1 class="page-title">Проверка рецептов</h1>
+<p class="page-subtitle">Просматривайте загруженные рецепты и принимайте решение по каждому из них.</p>
+
+<form method="get" class="filter-inline">
+    <label for="recipe-status">Статус рецепта</label>
+    <select id="recipe-status" name="status">
+        <option value="">Все статусы</option>
+        <option value="Ожидает проверки" {% if selected_status == "Ожидает проверки" %}selected{% endif %}>Ожидает проверки</option>
+        <option value="Одобрен" {% if selected_status == "Одобрен" %}selected{% endif %}>Одобрен</option>
+        <option value="Отклонён" {% if selected_status == "Отклонён" %}selected{% endif %}>Отклонён</option>
+    </select>
+    <button class="btn" type="submit">Применить</button>
+    <a class="reset-link" href="{% url 'pharmacist_recipes' %}">Сбросить</a>
+</form>
+
+<div class="simple-card pharmacist-recipes">
+    {% for recipe in recipes %}
+        <article class="order-row pharmacist-recipe-row">
+            <div class="pharmacist-recipe-info">
+                <strong>Рецепт №{{ recipe.pk }}</strong>
+                <p>Покупатель: {{ recipe.buyer.name }}</p>
+                <p>Заказ: {{ recipe.order.number }} · {{ recipe.uploaded_at|date:"d.m.Y H:i" }}</p>
+            </div>
+            <span class="status">{{ recipe.status }}</span>
+            <a class="btn pharmacist-review-button" href="{% url 'recipe_review' recipe.pk %}">
+                Проверить рецепт
+            </a>
+        </article>
+    {% empty %}
+        <p class="empty-state">Рецептов пока нет.</p>
+    {% endfor %}
+</div>
+{% endblock %}

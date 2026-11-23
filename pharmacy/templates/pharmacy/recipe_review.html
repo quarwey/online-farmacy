@@ -1,0 +1,9 @@
+{% extends "pharmacy/base.html" %}
+{% block title %}Проверка рецепта — Здрав.Ру{% endblock %}
+{% block content %}
+<h1 class="page-title">Проверка рецепта №{{ recipe.pk }}</h1><div class="simple-card">
+<p>Покупатель: {{ recipe.buyer.name }}</p><p>Заказ: {{ recipe.order.number }}</p><p>Загружен: {{ recipe.uploaded_at|date:"d.m.Y H:i" }}</p>
+<p><a class="text-link" href="{{ recipe.file.url }}" target="_blank">Открыть загруженный файл</a></p>
+<form method="post">{% csrf_token %}<div class="field"><label>Комментарий</label><textarea name="comment">{{ recipe.comment }}</textarea></div><div class="button-row"><button class="btn" name="status" value="Одобрен">Одобрить</button><button class="btn danger" name="status" value="Отклонён">Отклонить</button></div></form>
+</div>
+{% endblock %}

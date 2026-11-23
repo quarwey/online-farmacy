@@ -1,0 +1,8 @@
+{% extends "pharmacy/base.html" %}
+{% block title %}Личный кабинет — Здрав.Ру{% endblock %}
+{% block content %}
+<div class="breadcrumb">Главная　/　Личный кабинет</div><h1 class="page-title">Здравствуйте, {{ current_user.name }}!</h1>
+<div class="simple-card"><h2>История заказов</h2>
+{% for order in orders %}<div class="order-row"><div><strong>{{ order.number }}</strong><p>{{ order.created_at|date:"d.m.Y H:i" }} · {{ order.pharmacy.name }}</p></div><span class="status">{{ order.status }}</span><strong>{{ order.total }} ₽</strong><a class="text-link" href="{% url 'order_detail' order.pk %}">Подробнее</a></div>{% empty %}<p>У вас пока нет заказов.</p>{% endfor %}
+</div>
+{% endblock %}

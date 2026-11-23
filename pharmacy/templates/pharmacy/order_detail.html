@@ -1,0 +1,56 @@
+{% extends "pharmacy/base.html" %}
+{% block title %}Заказ {{ order.number }} — Здрав.Ру{% endblock %}
+{% block content %}
+<div class="breadcrumb"><a href="{% url 'profile' %}">Личный кабинет</a>　/　{{ order.number }}</div>
+<h1 class="page-title">Заказ {{ order.number }}</h1>
+<div class="simple-card">
+    <p>Статус: <strong>{{ order.status }}</strong></p>
+    <p>Дата: {{ order.created_at|date:"d.m.Y H:i" }}</p>
+    <p>Аптека: {{ order.pharmacy.name }}</p>
+    <p>Способ получения: {{ order.delivery_method }}</p>
+
+    <h2>Состав заказа</h2>
+    {% for item in order.items.all %}
+        <div class="summary-row">
+            <span>{{ item.medicine.name }} × {{ item.quantity }}</span>
+            <strong>{{ item.quantity }} × {{ item.price_at_order }} ₽</strong>
+        </div>
+    {% endfor %}
+    <div class="cart-total">Итого: {{ order.total }} ₽</div>
+
+    {% if order.has_prescription_medicines %}
+        <div class="prescription-status">
+            <h2>Проверка рецептов</h2>
+            {% for recipe in order.recipes.all %}
+                <div class="recipe-status-row">
+                    <p><a href="{{ recipe.file.url }}" target="_blank" rel="noopener">Открыть рецепт №{{ recipe.pk }}</a></p>
+                    {% if recipe.status == "Одобрен" %}
+                        <span class="status-approved">Одобрен</span>
+                    {% elif recipe.status == "Отклонён" %}
+                        <span class="status-rejected">Отклонён</span>
+                    {% else %}
+                        <span class="status-pending">Ожидает проверки</span>
+                    {% endif %}
+                    {% if recipe.comment %}
+                        <p>Комментарий фармацевта: {{ recipe.comment }}</p>
+                    {% endif %}
+                </div>
+            {% empty %}
+                <p>Рецепт ещё не загружен.</p>
+            {% endfor %}
+
+            {% if can_upload_recipe %}
+                <a class="btn" href="{% url 'recipe_upload' order.pk %}">Загрузить новый рецепт</a>
+            {% endif %}
+
+            {% if order.can_be_dispensed %}
+                <p class="status-approved">Все загруженные рецепты одобрены фармацевтом.</p>
+            {% elif has_pending_recipes %}
+                <p class="status-pending">Рецепт отправлен на проверку. Дождитесь решения фармацевта.</p>
+            {% else %}
+                <p class="status-rejected">Необходимо загрузить новый рецепт после отклонения предыдущего.</p>
+            {% endif %}
+        </div>
+    {% endif %}
+</div>
+{% endblock %}

@@ -1,0 +1,56 @@
+{% extends "pharmacy/base.html" %}
+{% block title %}Каталог препаратов — Здрав.Ру{% endblock %}
+{% block content %}
+<div class="breadcrumb"><a href="{% url 'home' %}">Главная</a>　/　Каталог</div>
+<h1 class="page-title">Каталог препаратов</h1>
+<p class="page-subtitle">Выберите подходящий препарат или воспользуйтесь фильтрами.</p>
+<div class="catalog-layout">
+    <aside class="filters">
+        <h2>Фильтры</h2>
+        <form method="get">
+            <div class="filter-group"><strong>Форма выпуска</strong>
+                {% for item in forms %}<label class="check-row"><input type="radio" name="form" value="{{ item.pk }}" {% if filters.form == item.pk|stringformat:"s" %}checked{% endif %}> {{ item.name }}</label>{% endfor %}
+            </div>
+            <div class="filter-group"><strong>Производитель</strong>
+                <select name="manufacturer"><option value="">Все производители</option>{% for item in manufacturers %}<option value="{{ item.pk }}" {% if filters.manufacturer == item.pk|stringformat:"s" %}selected{% endif %}>{{ item.name }}</option>{% endfor %}</select>
+            </div>
+            <div class="filter-group"><strong>Цена, ₽</strong><input type="number" name="min_price" min="0" placeholder="От" value="{{ filters.min_price }}"><input type="number" name="max_price" min="0" placeholder="До" value="{{ filters.max_price }}"></div>
+            <div class="filter-group"><strong>Аптека</strong>
+                <select name="pharmacy"><option value="">Любая аптека</option>{% for item in pharmacies %}<option value="{{ item.pk }}" {% if filters.pharmacy == item.pk|stringformat:"s" %}selected{% endif %}>{{ item.name }}</option>{% endfor %}</select>
+            </div>
+            <label class="check-row"><input type="checkbox" name="available" value="1" {% if filters.available == "1" %}checked{% endif %}> Только в наличии</label>
+            <input type="hidden" name="q" value="{{ query }}"><input type="hidden" name="sort" value="{{ filters.sort }}">
+            <button class="btn full" type="submit">Применить</button>
+            <a class="reset-link" href="{% url 'catalog' %}">Сбросить фильтры</a>
+        </form>
+    </aside>
+    <section>
+        <div class="catalog-top">
+            <form method="get" class="catalog-search-form"><input class="catalog-search" type="search" name="q" placeholder="Найти препарат..." value="{{ query }}"><button class="btn" type="submit">Найти</button></form>
+            <form method="get"><input type="hidden" name="q" value="{{ query }}"><input type="hidden" name="form" value="{{ filters.form }}"><input type="hidden" name="manufacturer" value="{{ filters.manufacturer }}"><input type="hidden" name="min_price" value="{{ filters.min_price }}"><input type="hidden" name="max_price" value="{{ filters.max_price }}"><input type="hidden" name="pharmacy" value="{{ filters.pharmacy }}"><input type="hidden" name="available" value="{{ filters.available }}"><select name="sort" class="sort-select" onchange="this.form.submit()"><option value="popular" {% if filters.sort == "popular" %}selected{% endif %}>Сначала популярные</option><option value="price_asc" {% if filters.sort == "price_asc" %}selected{% endif %}>Сначала дешевле</option><option value="price_desc" {% if filters.sort == "price_desc" %}selected{% endif %}>Сначала дороже</option><option value="name" {% if filters.sort == "name" %}selected{% endif %}>По названию</option></select></form>
+        </div>
+        <div class="product-grid">
+            {% for item in page_obj %}
+            <article class="product-card">
+                <a class="product-image" href="{% url 'medicine_detail' item.pk %}">
+                    {% if item.image and item.image.name %}
+                        <img src="{{ item.image.url }}" alt="{{ item.name }}" loading="lazy">
+                    {% endif %}
+                </a>
+                <h2>{{ item.name }}</h2>
+                <p class="product-description">{{ item.active_ingredient }} · {{ item.dosage }}</p>
+                <p class="product-price">{{ item.price }} ₽</p>
+                <a class="product-button" href="{% url 'medicine_detail' item.pk %}">Подробнее</a>
+            </article>
+            {% empty %}
+            <p>По заданным параметрам препараты не найдены.</p>
+            {% endfor %}
+        </div>
+        <div class="pagination">
+            {% if page_obj.has_previous %}<a class="page-num" href="?{{ request.GET.urlencode }}&page={{ page_obj.previous_page_number }}">‹</a>{% endif %}
+            <span class="page-num active">{{ page_obj.number }}</span>
+            {% if page_obj.has_next %}<a class="page-num" href="?{{ request.GET.urlencode }}&page={{ page_obj.next_page_number }}">›</a>{% endif %}
+        </div>
+    </section>
+</div>
+{% endblock %}

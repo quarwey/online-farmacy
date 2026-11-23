@@ -1,0 +1,45 @@
+{% extends "pharmacy/base.html" %}
+{% block title %}Корзина — Здрав.Ру{% endblock %}
+{% block content %}
+<div class="breadcrumb">Главная　/　Корзина</div><h1 class="page-title">Корзина</h1>
+<div class="simple-card">
+    {% for row in rows %}
+    <div class="cart-row">
+        <div class="product-image">
+            {% if row.medicine.image %}
+                <img src="{{ row.medicine.image.url }}" alt="{{ row.medicine.name }}">
+            {% endif %}
+        </div>
+
+        <div class="cart-row-text">
+            <h2>{{ row.medicine.name }}</h2>
+            <p>{{ row.medicine.dosage }} · {{ row.medicine.release_form }}</p>
+        </div>
+
+        <form method="post" class="quantity-form">
+            {% csrf_token %}
+            <input type="hidden" name="medicine_id" value="{{ row.medicine.pk }}">
+            <input type="hidden" name="action" value="update">
+            <input type="number" name="quantity" min="1" max="99" value="{{ row.quantity }}">
+            <button class="btn small-btn">Обновить</button>
+        </form>
+
+        <strong>{{ row.line_total }} ₽</strong>
+
+        <form method="post">
+            {% csrf_token %}
+            <input type="hidden" name="medicine_id" value="{{ row.medicine.pk }}">
+            <input type="hidden" name="action" value="remove">
+            <button class="remove-button">Удалить</button>
+        </form>
+    </div>
+    {% empty %}
+        <p>Корзина пока пуста. Перейдите в каталог, чтобы выбрать препараты.</p>
+    {% endfor %}
+
+    {% if rows %}
+        <div class="cart-total">Итого: {{ total }} ₽</div>
+        <a class="btn" href="{% url 'checkout' %}">Перейти к оформлению</a>
+    {% endif %}
+</div>
+{% endblock %}

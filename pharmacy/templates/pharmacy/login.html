@@ -1,0 +1,24 @@
+{% extends "pharmacy/base.html" %}
+{% block title %}Вход — Здрав.Ру{% endblock %}
+{% block content %}
+<div class="auth-layout">
+    <div class="auth-placeholder">
+        <div class="auth-promo">
+            <span class="auth-brand">ЗДРАВ.РУ</span>
+            <h2>Рады видеть вас снова!</h2>
+            <p>Войдите в личный кабинет, чтобы просматривать каталог препаратов, оформлять заказы и следить за их статусом.</p>
+        </div>
+    </div>
+    <section class="auth-card">
+        <h1>Вход в аккаунт</h1><p class="muted">Введите данные для авторизации</p>
+        <form method="post">{% csrf_token %}
+            {% if form.non_field_errors %}<div class="form-errors">{{ form.non_field_errors }}</div>{% endif %}
+            <div class="field"><label for="{{ form.phone.id_for_label }}">Номер телефона</label>{{ form.phone }}{{ form.phone.errors }}</div>
+            <div class="field"><label for="{{ form.password.id_for_label }}">Пароль</label>{{ form.password }}{{ form.password.errors }}</div>
+            <label class="check-row">{{ form.remember }} Запомнить меня</label>
+            <button class="btn full" type="submit">Войти</button>
+        </form>
+        <a class="form-bottom-link" href="{% url 'register' %}">Нет аккаунта?</a>
+    </section>
+</div>
+{% endblock %}

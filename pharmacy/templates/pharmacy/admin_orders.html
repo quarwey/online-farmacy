@@ -1,0 +1,49 @@
+
+{% extends "pharmacy/base.html" %}
+
+{% block title %}Управление заказами — Здрав.Ру{% endblock %}
+
+{% block content %}
+<h1 class="page-title">Управление заказами</h1>
+<p class="page-subtitle">Просмотр заказов и изменение их статусов.</p>
+
+<div class="simple-card">
+    {% for order in orders %}
+        <div class="order-row">
+            <div>
+                <h3>Заказ {{ order.number }}</h3>
+                <p>Покупатель: {{ order.buyer.name }}</p>
+                <p>Аптека: {{ order.pharmacy.name }}</p>
+                <p>Дата: {{ order.created_at|date:"d.m.Y H:i" }}</p>
+                <p>Текущий статус: <strong>{{ order.status }}</strong></p>
+
+                {% if order.has_prescription_medicines %}
+                    {% if order.can_be_dispensed %}
+                        <p class="status-approved">Все рецепты одобрены</p>
+                    {% else %}
+                        <p class="status-pending">Есть рецепты, ожидающие проверки или отклонённые фармацевтом</p>
+                    {% endif %}
+                {% endif %}
+            </div>
+
+            <form method="post" action="{% url 'admin_order_status' order.pk %}">
+                {% csrf_token %}
+
+                <label>Новый статус</label>
+                <select name="status">
+                    {% for value, label in order.STATUS_CHOICES %}
+                        <option value="{{ value }}"
+                            {% if order.status == value %}selected{% endif %}>
+                            {{ label }}
+                        </option>
+                    {% endfor %}
+                </select>
+
+                <button class="btn" type="submit">Сохранить</button>
+            </form>
+        </div>
+    {% empty %}
+        <p class="empty-state">Заказов пока нет.</p>
+    {% endfor %}
+</div>
+{% endblock %}

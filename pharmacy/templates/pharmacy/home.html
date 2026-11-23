@@ -1,0 +1,47 @@
+{% extends "pharmacy/base.html" %}
+{% block title %}Главная — Здрав.Ру{% endblock %}
+{% block content %}
+<section class="hero-section">
+    <div class="slider">
+        <button class="slider-arrow prev" type="button" aria-label="Предыдущий слайд">‹</button>
+        <div class="slider-window">
+            <div class="slider-track">
+                <div class="slide"></div>
+                <div class="slide slide-two"></div>
+                <div class="slide slide-three"></div>
+            </div>
+        </div>
+        <button class="slider-arrow next" type="button" aria-label="Следующий слайд">›</button>
+    </div>
+    <div class="slider-dots">
+        <button class="slider-dot active" type="button" aria-label="Слайд 1"></button>
+        <button class="slider-dot" type="button" aria-label="Слайд 2"></button>
+        <button class="slider-dot" type="button" aria-label="Слайд 3"></button>
+    </div>
+</section>
+<section class="info-grid">
+    <article class="info-card"><h2>Удобный каталог</h2><p>Ищите препараты по названию, форме выпуска и производителю.</p></article>
+    <article class="info-card"><h2>Наличие в аптеках</h2><p>Проверяйте доступность товаров в выбранной аптеке.</p></article>
+    <article class="info-card"><h2>Личный кабинет</h2><p>Следите за заказами и статусом проверки рецептов.</p></article>
+</section>
+<section class="popular-section">
+    <div class="section-heading"><h1>Популярные препараты</h1><a href="{% url 'catalog' %}" class="catalog-link">Весь каталог →</a></div>
+    <div class="product-grid">
+        {% for item in popular %}
+        <article class="product-card">
+            <a class="product-image" href="{% url 'medicine_detail' item.pk %}">
+                {% if item.image and item.image.name %}
+                        <img src="{{ item.image.url }}" alt="{{ item.name }}" loading="lazy">
+                    {% endif %}
+            </a>
+            <h2>{{ item.name }}</h2>
+            <p class="product-description">{{ item.active_ingredient }} · {{ item.dosage }}</p>
+            <p class="product-price">От {{ item.price }} ₽</p>
+            <a class="product-button" href="{% url 'medicine_detail' item.pk %}">Подробнее</a>
+        </article>
+        {% empty %}
+        <p>Пока нет добавленных препаратов. Добавьте товары через панель администратора.</p>
+        {% endfor %}
+    </div>
+</section>
+{% endblock %}

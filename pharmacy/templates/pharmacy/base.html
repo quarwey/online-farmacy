@@ -1,0 +1,56 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{% block title %}Здрав.Ру{% endblock %}</title>
+    <link rel="stylesheet" href="{% static 'css/main.css' %}">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:ital,opsz,wght@0,14..32,100..900;1,14..32,100..900&family=Space+Grotesk:wght@300..700&display=swap" rel="stylesheet">
+    <script src="{% static 'js/main.js' %}" defer></script>
+</head>
+<body>
+<header class="site-header">
+    <div class="header-inner">
+        <a class="logo" href="{% url 'home' %}"><span>Здрав</span>.Ру</a>
+        <button class="menu-toggle" type="button" aria-label="Открыть меню"
+                aria-expanded="false" aria-controls="site-menu">
+            <span></span><span></span><span></span>
+        </button>
+        <div class="header-menu" id="site-menu">
+            <nav class="main-nav" aria-label="Основная навигация">
+                <a href="{% url 'home' %}">Главная</a>
+                <a href="{% url 'catalog' %}">Каталог</a>
+            </nav>
+            <form class="header-search" action="{% url 'catalog' %}" method="get">
+                <input type="search" name="q" placeholder="Найти препарат..." value="{{ request.GET.q }}">
+            </form>
+            <a class="header-cart" href="{% url 'cart' %}">Корзина <span>{{ cart_count|default:0 }}</span></a>
+            {% if current_user %}
+                {% if current_user.role == "Фармацевт" or current_user.role == "Администратор" %}
+                    <a class="login-link" href="{% url 'pharmacist_recipes' %}">Проверка рецептов</a>
+                {% endif %}
+                <a class="login-link" href="{% url 'profile' %}">{{ current_user.name }}</a>
+                <a class="login-link" href="{% url 'logout' %}">Выйти</a>
+            {% else %}
+                <a class="login-link" href="{% url 'login' %}">Войти</a>
+            {% endif %}
+        </div>
+    </div>
+</header>
+{% if messages %}
+<div class="messages">
+    {% for message in messages %}<div class="message {{ message.tags }}">{{ message }}</div>{% endfor %}
+</div>
+{% endif %}
+<main class="main-content">{% block content %}{% endblock %}</main>
+<footer class="site-footer">
+    <div class="footer-inner">
+        <a class="logo" href="{% url 'home' %}">Здрав<span>.</span>Ру</a>
+        <p>© 2026 Онлайн-аптека. Все права защищены.</p>
+    </div>
+</footer>
+</body>
+</html>

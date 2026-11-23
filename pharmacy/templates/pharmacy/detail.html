@@ -1,0 +1,33 @@
+{% extends "pharmacy/base.html" %}
+{% block title %}{{ medicine.name }} — Здрав.Ру{% endblock %}
+{% block content %}
+<div class="breadcrumb"><a href="{% url 'home' %}">Главная</a>　/　<a href="{% url 'catalog' %}">Каталог</a>　/　{{ medicine.name }}</div>
+<section class="detail-card">
+   <div class="detail-image">
+    {% if medicine.image %}
+        <img src="{{ medicine.image.url }}" alt="{{ medicine.name }}">
+    {% endif %}
+</div>
+    <div class="detail-info">
+        <h1>{{ medicine.name }}</h1><p>{{ medicine.description|default:"Информация о препарате и его характеристиках." }}</p>
+        <div class="detail-price">{{ medicine.price }} ₽</div>
+        <dl class="detail-meta">
+            <dt>Действующее вещество</dt><dd>{{ medicine.active_ingredient }}</dd>
+            <dt>Дозировка</dt><dd>{{ medicine.dosage }}</dd>
+            <dt>Форма выпуска</dt><dd>{{ medicine.release_form.name }}</dd>
+            <dt>Производитель</dt><dd>{{ medicine.manufacturer.name }}</dd>
+        </dl>
+        <form method="post" action="{% url 'add_to_cart' medicine.pk %}">{% csrf_token %}<input type="hidden" name="next" value="{% url 'cart' %}"><button class="btn" type="submit">В корзину</button></form>
+        <div class="notice">Наличие зависит от выбранной аптеки. Перед оформлением проверьте остатки.</div>
+        {% if stock_rows %}<h3>Наличие в аптеках</h3>{% for stock in stock_rows %}<p class="stock-line">{{ stock.pharmacy.name }} — {{ stock.quantity }} шт.</p>{% endfor %}{% endif %}
+    </div>
+</section>
+<section class="analogs-section">
+    <div class="section-heading"><h2>Аналоги препарата</h2></div>
+    <div class="product-grid analog-grid">
+        {% for item in analogs %}
+        <article class="product-card"><a class="product-image" href="{% url 'medicine_detail' item.pk %}">{% if item.image and item.image.name %}<img src="{{ item.image.url }}" alt="{{ item.name }}" loading="lazy">{% endif %}</a><h2>{{ item.name }}</h2><p class="product-description">{{ item.active_ingredient }} · {{ item.dosage }}</p><p class="product-price">{{ item.price }} ₽</p><a class="product-button" href="{% url 'medicine_detail' item.pk %}">Подробнее</a></article>
+        {% empty %}<p>Аналоги для этого препарата пока не добавлены.</p>{% endfor %}
+    </div>
+</section>
+{% endblock %}

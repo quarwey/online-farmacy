@@ -1,0 +1,20 @@
+{% extends "pharmacy/base.html" %}
+{% block title %}Загрузка рецепта — Здрав.Ру{% endblock %}
+{% block content %}
+<div class="breadcrumb"><a href="{% url 'profile' %}">Личный кабинет</a>　/　<a href="{% url 'order_detail' order.pk %}">{{ order.number }}</a>　/　Рецепт</div>
+<h1 class="page-title">Загрузка рецепта</h1>
+<p class="page-subtitle">Прикрепите новый файл. После отправки он появится в кабинете фармацевта.</p>
+<form method="post" enctype="multipart/form-data" class="simple-card">
+    {% csrf_token %}
+    {% if form.non_field_errors %}<div class="form-errors">{{ form.non_field_errors }}</div>{% endif %}
+    {% for field in form %}
+        <div class="field">
+            <label for="{{ field.id_for_label }}">{{ field.label }}</label>
+            {{ field }}
+            {{ field.errors }}
+        </div>
+    {% endfor %}
+    <p class="muted">Форматы JPG, PNG и PDF. Максимальный размер — 10 МБ.</p>
+    <button class="btn" type="submit">Отправить на проверку</button>
+</form>
+{% endblock %}
