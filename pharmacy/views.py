@@ -20,7 +20,7 @@ def validate_recipe_file(uploaded_file):
     allowed_extensions = {".jpg", ".jpeg", ".png", ".pdf"}
     extension = os.path.splitext(uploaded_file.name)[1].lower()
     if extension not in allowed_extensions:
-        return "Разрешены файлы JPG, PNG и PDF."
+        return "Разрешены файлы JPG, PNG и PDF"
     if uploaded_file.size > 10 * 1024 * 1024:
         return "Размер каждого файла не должен превышать 10 МБ."
     return None
