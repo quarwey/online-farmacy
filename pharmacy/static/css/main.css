@@ -540,3 +540,71 @@ button:focus-visible, a:focus-visible, input:focus-visible, select:focus-visible
     .auth-promo h2 { font-size: 22px; }
     .auth-promo p { font-size: 13px; line-height: 1.5; }
 }
+
+
+/* Страницы ошибок 403 / 404 / 500 */
+.error-page {
+    min-height: 520px;
+    display: grid;
+    place-items: center;
+    padding: 32px 0;
+}
+.error-card {
+    width: min(100%, 680px);
+    padding: 48px 40px;
+    border: 1px solid var(--disabled);
+    border-radius: 14px;
+    background: #FFFFFF;
+    text-align: center;
+    box-shadow: 0 12px 36px rgba(30, 41, 59, .06);
+}
+.error-code {
+    color: var(--primary);
+    font-family: "Space Grotesk", Arial, sans-serif;
+    font-size: clamp(76px, 15vw, 124px);
+    font-weight: 700;
+    line-height: 1;
+    letter-spacing: -.07em;
+}
+.error-label {
+    display: inline-block;
+    margin: 16px 0 12px;
+    color: var(--secondary);
+    font-size: 11px;
+    font-weight: 700;
+    letter-spacing: .12em;
+}
+.error-card h1 {
+    margin: 0 0 12px;
+    font-size: clamp(23px, 4vw, 30px);
+}
+.error-card p {
+    max-width: 500px;
+    margin: 0 auto;
+    color: var(--muted);
+    font-size: 14px;
+    line-height: 1.7;
+}
+.error-actions {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: 10px;
+    margin-top: 26px;
+}
+.error-btn-secondary {
+    border: 1px solid var(--disabled);
+    background: #FFFFFF;
+    color: var(--text);
+}
+.error-btn-secondary:hover {
+    background: var(--accent);
+    color: var(--text);
+}
+@media (max-width: 600px) {
+    .error-page { min-height: 420px; }
+    .error-card { padding: 36px 20px; }
+    .error-actions { flex-direction: column; }
+    .error-actions .btn { width: 100%; }
+}
+
